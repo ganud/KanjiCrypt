@@ -1,6 +1,4 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import Header from "./components/header";
 import Input from "./components/input";
 
@@ -8,9 +6,17 @@ import "./App.css";
 
 function App() {
   const [count, setCount] = useState(0);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    // Localstorage only stores string. Empty means light mode.
+    return localStorage.getItem("isDark") || "";
+  });
   // Toggle dark mode
   function toggleDark() {
+    if (isDark) {
+      localStorage.setItem("isDark", "");
+    } else {
+      localStorage.setItem("isDark", "q");
+    }
     setIsDark(!isDark);
   }
   return (
