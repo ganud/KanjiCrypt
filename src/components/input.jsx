@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { decrypt, encrypt, convertBase4 } from "../../convert";
+import { decrypt, encrypt, convertBase4, hoverEffect } from "../../convert";
+
+function resetEncrypt() {
+  encryptTab.textContent = "Encrypt";
+}
+const encryptTab = document.getElementById("encryptTab");
 
 export default function Input() {
   const [input, setInput] = useState(""); // The user input to be encrypted into kanji.
@@ -27,13 +32,19 @@ export default function Input() {
 
   return (
     <div className="flex flex-col grow px-10 py-10 gap-4">
+      {/* Encrypt Decryption navigation tabs */}
       <div role="tablist" class="tabs tabs-lifted">
         <a
+          id="encryptTab"
           role="tab"
           class={isDecrypt ? "tab" : "tab tab-active"}
           onClick={toggleDecrypt}
+          onMouseEnter={() => {
+            hoverEffect("Encrypt");
+          }}
+          onMouseLeave={() => {}}
         >
-          Encrypt
+          Efjiasdoiajsdoijads
         </a>
         <a
           role="tab"
@@ -61,7 +72,6 @@ export default function Input() {
           value={output}
           placeholder={isDecrypt ? "Decrypted output" : "Encrypted output"}
           onClick={() => {
-            console.log("hi");
             navigator.clipboard.writeText(output);
           }}
         ></textarea>

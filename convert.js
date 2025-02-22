@@ -67,9 +67,27 @@ function find(char, key) {
     return char; // Return null if character is not found in the given key
 }
 
-    const a = encrypt("hello there", convertBase4("poop"));
-    console.log("hello there");
-    console.log(a);
-    console.log(convertBase4("poop"));
-    console.log(decrypt(a, convertBase4("poop")));
 
+export function hoverEffect(input) {
+    const endResult = encrypt(input, convertBase4(input));
+    const encryptTab = document.getElementById("encryptTab");
+
+    for (let i = 1; i <= input.length; i++) {
+        const count = input[i] * 10;
+        for (let j = 0; i < count; i++) {
+            input.textContent[i] = getRandomCharacter();
+            //set ith letter of encrypt to getRandomCharacter();
+        }
+        encrypt.textContent[i] = endResult[i];
+        //then set it to endResult[i]
+    }
+}
+
+function getRandomCharacter() {
+    const keys = Object.keys(data.kanji); // Get available keys (e.g., "0", "1", "2", "3")
+    if (keys.length === 0) return null; // Prevent errors if JSON is empty
+    const randomKey = keys[Math.floor(Math.random() * keys.length)]; // Pick a random key
+    const letterEntries = Object.entries(data.kanji[randomKey]); // Get letter-kanji pairs
+    const [randomLetter, kanjiList] = letterEntries[Math.floor(Math.random() * letterEntries.length)]; // Pick a random letter
+    return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // Return a random kanji
+}
