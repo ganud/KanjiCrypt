@@ -16,8 +16,12 @@ function encrypt(input, key) { //key characters must be 0, 1, 2, 3
 
     for (let i = 0; i < input.length; i++) {
         const char = input[i].toLowerCase(); //nth letter of input
-        const useKey = key[i].toString(); //nth letter of key
+        let useKey = key[i].toString(); //nth letter of key
         const nextKey = (parseInt(key[i]) === 3) ? "0" : (parseInt(key[i]) + 1).toString();
+
+        while (data.kanji[useKey][char].length === 0) {//find where kanji exists if array empty
+            useKey = (parseInt(useKey) === 3) ? "0" : (parseInt(useKey) + 1).toString(); //increment key
+        }
 
         if (data.kanji[useKey][char].length <= (data.kanji[nextKey][char].length * .1)) { //if the next key is 10x bigger then just use that, makes cypher more robust
             result += getRandomElement(data.kanji[nextKey][char]);
@@ -29,31 +33,43 @@ function encrypt(input, key) { //key characters must be 0, 1, 2, 3
 }
 
 function decrypt(input, key) {
-    let result = ""; //output
+    let result = ""; // Output
 
-    if (key.length > input.length) { //truncate key if key is longer than input
+    if (key.length > input.length) { // Truncate key if it's longer than input
         key = key.slice(0, input.length);
     }
 
     for (let i = 0; i < input.length; i++) {
-        const char = input[i]; //nth letter of input
-        const useKey = key[i].toString(); //nth letter of key
+        const char = input[i]; // nth letter of input
+        let useKey = key[i].toString(); // nth letter of key
         const prevKey = (parseInt(key[i]) === 0) ? "3" : (parseInt(key[i]) - 1).toString();
-    
-        console.log(find(char, prevKey));
-        //console.log(find(char, prevKey));
-        //console.log(data.kanji[useKey][find(char, prevKey)].length);
 
-        /*
-        if (data.kanji[useKey][find(char, key[i])].length >= (data.kanji[prevKey][find(char, prevKey)].length * 10)) { //reverse engineer
-            result += find(char, prevKey);
+        while (data.kanji[useKey][char].length === 0) {//find where kanji exists if array empty
+            useKey = (parseInt(useKey) === 3) ? "0" : (parseInt(useKey) + 1).toString(); //increment key
         }
-        else result += find(char, key);
-        */
-        
+        console.log(data.kanji[useKey][char]);
+        //console.log(useKey);
+
+        const useKeyLetter = find(char, useKey);
+        const prevKeyLetter = find(char, prevKey);
+
+        if (!useKeyLetter || !prevKeyLetter) {
+            console.warn(`No kanji mapping found for "${char}" in key "${useKey}" or "${prevKey}"`);
+            result += char; // Keep original character if not found
+            continue;
+        }
+
+        // Reverse engineer encryption process
+        if (data.kanji[useKey][useKeyLetter].length <= (data.kanji[prevKey][prevKeyLetter].length * 0.1)) {
+            result += prevKeyLetter;
+        } else {
+            result += useKeyLetter;
+        }
     }
+
     return result;
 }
+
 
 function convertBase4(str) {
     return str.split('')
@@ -77,10 +93,16 @@ function find(char, key) {
     return null; // Return null if character is not found in the given key
 }
 
-/*
-for (let i = 0; i < 100; i++) {
-    console.log(encrypt("hello", convertBase4("poop")));
+function getRandomString(length) {
+    const letters = "abcdefghijklmnopqrstuvwxyz"; // Possible letters
+    let result = "";
+    
+    for (let i = 0; i < length; i++) {
+        result += letters[Math.floor(Math.random() * letters.length)];
+    }
+    
+    return result;
 }
-    */
 
-console.log(decrypt("晊", "1111111"));
+
+    console.log(decrypt(encrypt("vvvvv", convertBase4("poop")), convertBase4("poop")));
