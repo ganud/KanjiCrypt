@@ -16,14 +16,18 @@ export function encrypt(input, key) { //key characters must be 0, 1, 2, 3
 
     for (let i = 0; i < input.length; i++) {
         const char = input[i].toLowerCase(); //nth letter of input
-        const useKey = key[i].toString(); //nth letter of key
+        let useKey = key[i].toString(); //nth letter of key
         const nextKey = (parseInt(key[i]) === 3) ? "0" : (parseInt(key[i]) + 1).toString();
+
+        while (data.kanji[useKey][char].length === 0) {//find where kanji exists if array empty
+            useKey = (parseInt(useKey) === 3) ? "0" : (parseInt(useKey) + 1).toString(); //increment key
+        }
 
         if (data.kanji[useKey][char].length <= (data.kanji[nextKey][char].length * .1)) { //if the next key is 10x bigger then just use that, makes cypher more robust
             result += getRandomElement(data.kanji[nextKey][char]);
         }
         else result += getRandomElement(data.kanji[useKey][char]);
-        
+
     }
     return result;
 }

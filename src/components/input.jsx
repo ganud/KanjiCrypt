@@ -2,17 +2,18 @@ import { useState } from "react";
 import { encrypt, convertBase4 } from "../../convert";
 
 export default function Input() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(""); // The user input read by both the input and output container.
   const [isDecrypt, setisDecrypt] = useState(false); // Flag to set decrypt
-  const [baseFour, setBaseFour] = useState("");
+  const [baseFour, setBaseFour] = useState(""); // Optional key entered by the user.
 
   const toggleDecrypt = () => {
     setisDecrypt(!isDecrypt);
+    setInput("");
   };
 
   return (
     <div className="flex flex-col grow px-10 py-10 gap-4">
-      <div role="tablist" class="tabs tabs-bordered">
+      <div role="tablist" class="tabs tabs-lifted">
         <a
           role="tab"
           class={isDecrypt ? "tab" : "tab tab-active"}
@@ -41,7 +42,7 @@ export default function Input() {
           }}
         ></textarea>
         <textarea
-          class="textarea grow resize-none "
+          class="textarea grow resize-none"
           value={
             // baseFour is the key used if it was inputted, else use the current input as the key.
             baseFour == ""
