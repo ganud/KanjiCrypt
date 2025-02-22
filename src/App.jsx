@@ -10,7 +10,7 @@ function App() {
     // Localstorage only stores string. Empty means light mode.
     return localStorage.getItem("isDark") || "";
   });
-  // Toggle dark mode
+  // Toggle dark mode and update localstorage
   function toggleDark() {
     if (isDark) {
       localStorage.setItem("isDark", "");

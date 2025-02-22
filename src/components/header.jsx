@@ -7,6 +7,7 @@ export default function Header({ toggleDark }) {
           Encrypt your text with Kanji!
         </div>
         <div class="flex-none">
+          {/* Dark mode toggle */}
           <input
             type="checkbox"
             className="toggle"

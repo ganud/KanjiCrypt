@@ -1,16 +1,24 @@
 import { useState } from "react";
-import { encrypt, convertBase4 } from "../../convert";
+import { decrypt, encrypt, convertBase4 } from "../../convert";
 
 export default function Input() {
   const [input, setInput] = useState(""); // The user input to be encrypted into kanji.
   const [isDecrypt, setisDecrypt] = useState(false); // Flag to set decrypt
   const [baseFour, setBaseFour] = useState(""); // Optional key entered by the user.
 
-  // baseFour is the key used to seed the output if it was inputted, else use the current input as the key.
-  const output =
-    baseFour == ""
-      ? encrypt(input, convertBase4(input))
-      : encrypt(input, convertBase4(baseFour));
+  let output = "";
+  if (isDecrypt) {
+    output =
+      baseFour == ""
+        ? decrypt(input, convertBase4(input))
+        : decrypt(input, convertBase4(baseFour));
+  } else {
+    // baseFour is the key used to seed the output if it was inputted, else use the current input as the key.
+    output =
+      baseFour == ""
+        ? encrypt(input, convertBase4(input))
+        : encrypt(input, convertBase4(baseFour));
+  }
 
   const toggleDecrypt = () => {
     setisDecrypt(!isDecrypt);
