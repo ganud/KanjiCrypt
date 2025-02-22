@@ -7,7 +7,7 @@ import data from './public/kanji_sorted.json' with { type: "json" };
     0 - vietnamese
 */
 
-function encrypt(input, key) { //key characters must be 0, 1, 2, 3
+export function encrypt(input, key) { //key characters must be 0, 1, 2, 3
     let result = ""; //output
 
     if (key.length > input.length) { //truncate key if key is longer than input
@@ -55,7 +55,7 @@ function decrypt(input, key) {
     return result;
 }
 
-function convertBase4(str) {
+export function convertBase4(str) {
     return str.split('')
         .map(char => parseInt(char.charCodeAt(0)).toString(4))
         .join('');
