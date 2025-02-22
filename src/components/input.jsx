@@ -2,9 +2,15 @@ import { useState } from "react";
 import { encrypt, convertBase4 } from "../../convert";
 
 export default function Input() {
-  const [input, setInput] = useState(""); // The user input read by both the input and output container.
+  const [input, setInput] = useState(""); // The user input to be encrypted into kanji.
   const [isDecrypt, setisDecrypt] = useState(false); // Flag to set decrypt
   const [baseFour, setBaseFour] = useState(""); // Optional key entered by the user.
+
+  // baseFour is the key used to seed the output if it was inputted, else use the current input as the key.
+  const output =
+    baseFour == ""
+      ? encrypt(input, convertBase4(input))
+      : encrypt(input, convertBase4(baseFour));
 
   const toggleDecrypt = () => {
     setisDecrypt(!isDecrypt);
@@ -41,15 +47,15 @@ export default function Input() {
             setInput(e.target.value);
           }}
         ></textarea>
+        {/* Output text area */}
         <textarea
           class="textarea grow resize-none"
-          value={
-            // baseFour is the key used if it was inputted, else use the current input as the key.
-            baseFour == ""
-              ? encrypt(input, convertBase4(input))
-              : encrypt(input, convertBase4(baseFour))
-          }
+          value={output}
           placeholder={isDecrypt ? "Decrypted output" : "Encrypted output"}
+          onClick={() => {
+            console.log("hi");
+            navigator.clipboard.writeText(output);
+          }}
         ></textarea>
       </div>
       {/* input for key */}
