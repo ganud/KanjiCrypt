@@ -56,10 +56,13 @@ export function decrypt(input, key) {
     }
 
     for (let i = 0; i < input.length; i++) {
+
+        if (i >= input.length) break;
         while (input[i] === "​" || input[i] === "‌") {
             i++;  //skip all . and ,
             skips++;
         }
+        if (i >= input.length) break;
         
         const char = input[i];
         let useKey = key[i - skips].toString();
@@ -74,7 +77,7 @@ export function decrypt(input, key) {
         }
 
         for (let i = 0; i < checkNext; i++) {
-            let old = useKey;
+
             useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
         }
         if (check2) useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
