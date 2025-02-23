@@ -61,14 +61,14 @@ function getRandomElement(arr) {
 function find(char, key) {
     for (let letter in data.kanji[key]) { //iterate through letters a, b, c... z
         if (data.kanji[key][letter].includes(char)) {
-            return letter; // Return the letter where the character is found
+            return letter; //return the letter where character found
         }
     }
-    return char; // Return null if character is not found in the given key
+    return char; //return null if character not found
 }
 
 
-let flickerIntervals = []; // Store intervals to clear them on mouse leave
+let flickerIntervals = [];
 
 export function hoverEffect2(input) {
     const endResult = encrypt(input, convertBase4(input));
@@ -76,13 +76,12 @@ export function hoverEffect2(input) {
 
     if (!encryptTab) return;
 
-    let flickerText = input.split(""); // Convert input to an array
-    let index = 0; // Start from the first character
-    let isHovering = true; // Track if the cursor is still hovering
+    let flickerText = input.split(""); //convert input to an array
+    let index = 0;
+    let isHovering = true; //track if cursor still hovering
 
-    // Function to flicker a single character
-    function flickerCharacter(i) {
-        let flickerCount = 5 + i; // Increase flicker duration for later characters
+    function flickerCharacter(i) { //flicker a single char
+        let flickerCount = 5 + i; //increase duration for later chars
 
         let flickerInterval = setInterval(() => {
             if (!isHovering) {
@@ -91,40 +90,40 @@ export function hoverEffect2(input) {
             }
             if (flickerCount-- <= 0) {
                 clearInterval(flickerInterval);
-                flickerText[i] = endResult[i]; // Set final character
+                flickerText[i] = endResult[i]; //set result encrypted character
             } else {
-                flickerText[i] = getRandomCharacter(); // Random flickering
+                flickerText[i] = getRandomCharacter(); //random flicker
             }
             encryptTab.textContent = flickerText.join("");
         }, 50);
 
-        flickerIntervals.push(flickerInterval); // Store interval for cleanup
+        flickerIntervals.push(flickerInterval);
     }
 
     // Function to progressively flicker characters
     function startFlickering() {
-        if (!isHovering || index >= input.length) return; // Stop if not hovering
+        if (!isHovering || index >= input.length) return; //stop if not hovering
 
         let timeout = setTimeout(() => {
-            if (!isHovering) return; // Stop if cursor leaves
+            if (!isHovering) return; //stop if cursor leaves
             flickerCharacter(index);
             index++;
-            startFlickering(); // Move to the next character
-        }, index * 100); // Progressive delay
+            startFlickering();
+        }, index * 100);
 
-        flickerIntervals.push(timeout); // Store timeout for cleanup
+        flickerIntervals.push(timeout);
     }
 
-    // Start flickering when hovering
+    //start flickering when hovering
     isHovering = true;
     startFlickering();
 
-    // Cleanup function on mouse leave
+    //cleanup function on mouseleave
     encryptTab.addEventListener("mouseleave", () => {
         isHovering = false;
-        flickerIntervals.forEach(clearInterval); // Stop all flickering
-        flickerIntervals = []; // Reset interval storage
-    }, { once: true }); // Runs only once per hover event
+        flickerIntervals.forEach(clearInterval);
+        flickerIntervals = [];
+    }, { once: true }); //runs only once per hover event
 }
 
 export function hoverEffect(input) {
@@ -133,13 +132,12 @@ export function hoverEffect(input) {
 
     if (!encryptTab) return;
 
-    let flickerText = input.split(""); // Convert input to an array
-    let index = 0; // Start from the first character
-    let isHovering = true; // Track if the cursor is still hovering
+    let flickerText = input.split("");
+    let index = 0;
+    let isHovering = true;
 
-    // Function to flicker a single character
     function flickerCharacter(i) {
-        let flickerCount = 5 + i; // Increase flicker duration for later characters
+        let flickerCount = 5 + i;
 
         let flickerInterval = setInterval(() => {
             if (!isHovering) {
@@ -148,51 +146,44 @@ export function hoverEffect(input) {
             }
             if (flickerCount-- <= 0) {
                 clearInterval(flickerInterval);
-                flickerText[i] = endResult[i]; // Set final character
+                flickerText[i] = endResult[i];
             } else {
-                flickerText[i] = getRandomCharacter(); // Random flickering
+                flickerText[i] = getRandomCharacter();
             }
             encryptTab.textContent = flickerText.join("");
         }, 50);
 
-        flickerIntervals.push(flickerInterval); // Store interval for cleanup
+        flickerIntervals.push(flickerInterval);
     }
 
-    // Function to progressively flicker characters
     function startFlickering() {
-        if (!isHovering || index >= input.length) return; // Stop if not hovering
+        if (!isHovering || index >= input.length) return;
 
         let timeout = setTimeout(() => {
-            if (!isHovering) return; // Stop if cursor leaves
+            if (!isHovering) return;
             flickerCharacter(index);
             index++;
-            startFlickering(); // Move to the next character
-        }, index * 100); // Progressive delay
+            startFlickering();
+        }, index * 100);
 
-        flickerIntervals.push(timeout); // Store timeout for cleanup
+        flickerIntervals.push(timeout);
     }
 
-    // Start flickering when hovering
     isHovering = true;
     startFlickering();
 
-    // Cleanup function on mouse leave
     encryptTab.addEventListener("mouseleave", () => {
         isHovering = false;
-        flickerIntervals.forEach(clearInterval); // Stop all flickering
-        flickerIntervals = []; // Reset interval storage
-    }, { once: true }); // Runs only once per hover event
+        flickerIntervals.forEach(clearInterval);
+        flickerIntervals = [];
+    }, { once: true });
 }
 
-
-
-
-
 export function getRandomCharacter() {
-    const keys = Object.keys(data.kanji); // Get available keys (e.g., "0", "1", "2", "3")
-    if (keys.length === 0) return null; // Prevent errors if JSON is empty
-    const randomKey = keys[Math.floor(Math.random() * keys.length)]; // Pick a random key
-    const letterEntries = Object.entries(data.kanji[randomKey]); // Get letter-kanji pairs
-    const [randomLetter, kanjiList] = letterEntries[Math.floor(Math.random() * letterEntries.length)]; // Pick a random letter
-    return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // Return a random kanji
+    const keys = Object.keys(data.kanji);
+    if (keys.length === 0) return null;
+    const randomKey = keys[Math.floor(Math.random() * keys.length)]; //pick random key
+    const letterEntries = Object.entries(data.kanji[randomKey]); //get letter-kanji pairs
+    const [randomLetter, kanjiList] = letterEntries[Math.floor(Math.random() * letterEntries.length)]; //pick random letter
+    return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // return random kanji
 }

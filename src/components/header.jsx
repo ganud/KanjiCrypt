@@ -6,20 +6,19 @@ export default function Header({ toggleDark }) {
       caption.textContent = "Encrypt your text with Kanji!";
     }
   }
-  let flickerIntervals = []; // Store intervals to clear them on mouse leave
+  let flickerIntervals = [];
   function hoverEffect(input) {
     const endResult = encrypt(input, convertBase4(input));
     const encryptTab = document.getElementById("caption");
 
     if (!encryptTab) return;
 
-    let flickerText = input.split(""); // Convert input to an array
-    let index = 0; // Start from the first character
-    let isHovering = true; // Track if the cursor is still hovering
+    let flickerText = input.split("");
+    let index = 0;
+    let isHovering = true;
 
-    // Function to flicker a single character
     function flickerCharacter(i) {
-      let flickerCount = 5 + i; // Increase flicker duration for later characters
+      let flickerCount = 5 + i;
 
       let flickerInterval = setInterval(() => {
         if (!isHovering) {
@@ -28,44 +27,41 @@ export default function Header({ toggleDark }) {
         }
         if (flickerCount-- <= 0) {
           clearInterval(flickerInterval);
-          flickerText[i] = endResult[i]; // Set final character
+          flickerText[i] = endResult[i];
         } else {
-          flickerText[i] = getRandomCharacter(); // Random flickering
+          flickerText[i] = getRandomCharacter();
         }
         encryptTab.textContent = flickerText.join("");
       }, 50);
 
-      flickerIntervals.push(flickerInterval); // Store interval for cleanup
+      flickerIntervals.push(flickerInterval);
     }
 
-    // Function to progressively flicker characters
     function startFlickering() {
-      if (!isHovering || index >= input.length) return; // Stop if not hovering
+      if (!isHovering || index >= input.length) return;
 
       let timeout = setTimeout(() => {
-        if (!isHovering) return; // Stop if cursor leaves
+        if (!isHovering) return;
         flickerCharacter(index);
         index++;
-        startFlickering(); // Move to the next character
-      }, index * 100); // Progressive delay
+        startFlickering();
+      }, index * 100);
 
-      flickerIntervals.push(timeout); // Store timeout for cleanup
+      flickerIntervals.push(timeout);
     }
 
-    // Start flickering when hovering
     isHovering = true;
     startFlickering();
 
-    // Cleanup function on mouse leave
     encryptTab.addEventListener(
       "mouseleave",
       () => {
         isHovering = false;
-        flickerIntervals.forEach(clearInterval); // Stop all flickering
-        flickerIntervals = []; // Reset interval storage
+        flickerIntervals.forEach(clearInterval);
+        flickerIntervals = [];
       },
       { once: true }
-    ); // Runs only once per hover event
+    );
   }
 
   return (
@@ -89,7 +85,7 @@ export default function Header({ toggleDark }) {
           </div>
         </div>
         <div class="flex-none">
-          {/* Dark mode toggle */}
+          {/* dark mode toggle */}
           <input
             type="checkbox"
             className="toggle"
@@ -98,10 +94,6 @@ export default function Header({ toggleDark }) {
           />
         </div>
       </div>
-      {/* <div className="navbar bg-base-100">
-        <a className="btn btn-ghost text-xl">KanjiCrypt</a>
-        <h2 className=" px-2">Encrypt your text with Kanji!</h2>
-      </div> */}
     </>
   );
 }

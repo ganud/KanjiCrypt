@@ -22,9 +22,9 @@ function resetDecrypt() {
 }
 
 export default function Input() {
-  const [input, setInput] = useState(""); // The user input to be encrypted into kanji.
-  const [isDecrypt, setisDecrypt] = useState(false); // Flag to set decrypt
-  const [baseFour, setBaseFour] = useState(""); // Optional key entered by the user.
+  const [input, setInput] = useState("");
+  const [isDecrypt, setisDecrypt] = useState(false);
+  const [baseFour, setBaseFour] = useState(""); //optional key entered by user
 
   let output = "";
   if (isDecrypt) {
@@ -33,7 +33,7 @@ export default function Input() {
         ? decrypt(input, convertBase4(input))
         : decrypt(input, convertBase4(baseFour));
   } else {
-    // baseFour is the key used to seed the output if it was inputted, else use the current input as the key.
+    // baseFour is the key used to seed the output if it was inputted, else use current input as key
     output =
       baseFour == ""
         ? encrypt(input, convertBase4(input))
@@ -47,7 +47,7 @@ export default function Input() {
 
   return (
     <div className="flex flex-col grow px-10 py-10 gap-4">
-      {/* Encrypt Decryption navigation tabs */}
+      {/* encrypt decrypt navigation tabs */}
       <div className="flex justify-between">
         <div role="tablist" class="tabs tabs-lifted">
           <a
@@ -100,7 +100,7 @@ export default function Input() {
             setInput(e.target.value);
           }}
         ></textarea>
-        {/* Output text area */}
+        {/* output textarea */}
         <textarea
           class="textarea grow resize-none"
           value={output}

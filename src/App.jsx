@@ -7,10 +7,10 @@ import "./App.css";
 function App() {
   const [count, setCount] = useState(0);
   const [isDark, setIsDark] = useState(() => {
-    // Localstorage only stores string. Empty means light mode.
+    // localstorage only stores string, empty means light mode
     return localStorage.getItem("isDark") || "";
   });
-  // Toggle dark mode and update localstorage
+  // toggle dark mode and update localstorage
   function toggleDark() {
     if (isDark) {
       localStorage.setItem("isDark", "");
