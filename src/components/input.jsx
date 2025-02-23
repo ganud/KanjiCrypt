@@ -1,17 +1,23 @@
 import { useState } from "react";
-import { decrypt, encrypt, convertBase4, hoverEffect, hoverEffect2 } from "../../convert";
+import {
+  decrypt,
+  encrypt,
+  convertBase4,
+  hoverEffect,
+  hoverEffect2,
+} from "../../convert";
 
 function resetEncrypt() {
   const encryptTab = document.getElementById("encryptTab");
   if (encryptTab) {
-      encryptTab.textContent = "Encrypt";
+    encryptTab.textContent = "Encrypt";
   }
 }
 
 function resetDecrypt() {
   const decryptTab = document.getElementById("decryptTab");
   if (decryptTab) {
-      decryptTab.textContent = "Decrypt";
+    decryptTab.textContent = "Decrypt";
   }
 }
 
@@ -42,38 +48,48 @@ export default function Input() {
   return (
     <div className="flex flex-col grow px-10 py-10 gap-4">
       {/* Encrypt Decryption navigation tabs */}
-      <div role="tablist" class="tabs tabs-lifted">
-        <a
-          id="encryptTab"
-          role="tab"
-          class={isDecrypt ? "tab" : "tab tab-active"}
-          onClick={toggleDecrypt}
-          onMouseEnter={() => {
-            hoverEffect("Encrypt");
-          }}
-          onMouseLeave={() => {
-            resetEncrypt();
+      <div className="flex justify-between">
+        <div role="tablist" class="tabs tabs-lifted">
+          <a
+            id="encryptTab"
+            role="tab"
+            class={isDecrypt ? "tab" : "tab tab-active"}
+            onClick={toggleDecrypt}
+            onMouseEnter={() => {
+              hoverEffect("Encrypt");
+            }}
+            onMouseLeave={() => {
+              resetEncrypt();
+            }}
+          >
+            Encrypt
+          </a>
+          <a
+            id="decryptTab"
+            role="tab"
+            class={isDecrypt ? "tab tab-active" : "tab"}
+            onClick={toggleDecrypt}
+            onMouseEnter={() => {
+              hoverEffect2("Decrypt");
+            }}
+            onMouseLeave={() => {
+              resetDecrypt();
+            }}
+          >
+            Decrypt
+          </a>
+        </div>
+        <button
+          className="btn max-w-xs btn-ghost  btn-outline"
+          onClick={() => {
+            navigator.clipboard.writeText(output);
           }}
         >
-          Encrypt
-        </a>
-        <a
-          id="decryptTab"
-          role="tab"
-          class={isDecrypt ? "tab tab-active" : "tab"}
-          onClick={toggleDecrypt}
-          onMouseEnter={() => {
-            hoverEffect2("Decrypt");
-          }}
-          onMouseLeave={() => {
-            resetDecrypt();
-          }}
-        >
-          Decrypt
-        </a>
+          Copy Output
+        </button>
       </div>
       {/* container for input and output */}
-      <div className="flex justify-center gap-2 grow">
+      <div className="flex flex-col sm:flex-row justify-center gap-2 grow">
         <textarea
           class="textarea grow resize-none"
           placeholder={
@@ -89,9 +105,6 @@ export default function Input() {
           class="textarea grow resize-none"
           value={output}
           placeholder={isDecrypt ? "Decrypted output" : "Encrypted output"}
-          onClick={() => {
-            navigator.clipboard.writeText(output);
-          }}
         ></textarea>
       </div>
       {/* input for key */}
