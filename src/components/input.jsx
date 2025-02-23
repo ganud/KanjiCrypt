@@ -1,10 +1,19 @@
 import { useState } from "react";
-import { decrypt, encrypt, convertBase4, hoverEffect } from "../../convert";
+import { decrypt, encrypt, convertBase4, hoverEffect, hoverEffect2 } from "../../convert";
 
 function resetEncrypt() {
-  encryptTab.textContent = "Encrypt";
+  const encryptTab = document.getElementById("encryptTab");
+  if (encryptTab) {
+      encryptTab.textContent = "Encrypt";
+  }
 }
-const encryptTab = document.getElementById("encryptTab");
+
+function resetDecrypt() {
+  const decryptTab = document.getElementById("decryptTab");
+  if (decryptTab) {
+      decryptTab.textContent = "Decrypt";
+  }
+}
 
 export default function Input() {
   const [input, setInput] = useState(""); // The user input to be encrypted into kanji.
@@ -42,14 +51,23 @@ export default function Input() {
           onMouseEnter={() => {
             hoverEffect("Encrypt");
           }}
-          onMouseLeave={() => {}}
+          onMouseLeave={() => {
+            resetEncrypt();
+          }}
         >
-          Efjiasdoiajsdoijads
+          Encrypt
         </a>
         <a
+          id="decryptTab"
           role="tab"
           class={isDecrypt ? "tab tab-active" : "tab"}
           onClick={toggleDecrypt}
+          onMouseEnter={() => {
+            hoverEffect2("Decrypt");
+          }}
+          onMouseLeave={() => {
+            resetDecrypt();
+          }}
         >
           Decrypt
         </a>
