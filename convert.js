@@ -16,12 +16,31 @@ export function encrypt(input, key) {
     for (let i = 0; i < input.length; i++) {
         const char = input[i].toLowerCase();
         let useKey = key[i].toString();
+        const nextKey = (parseInt(key[i]) === 3) ? "0" : (parseInt(key[i]) + 1).toString();
+        let jumped = 0;
+        let jumped2 = false;
 
         if (!"qwertyuiopasdfghjklzxcvbnm".includes(char.toLowerCase())) {
             result += char;
         }
         else {
-            result += getRandomElement(data.kanji[useKey][char]);
+
+            while (data.kanji[useKey][char].length === 0) {//find where kanji exists if array empty
+                useKey = (parseInt(useKey) === 3) ? "0" : (parseInt(useKey) + 1).toString(); //increment key
+                jumped++;
+            }
+
+            if (data.kanji[useKey][char].length <= (data.kanji[nextKey][char].length * .2)) { //if the next key is 5x bigger then just use that, makes cypher more robust
+                result += getRandomElement(data.kanji[nextKey][char]);
+                jumped2 = true;
+            }
+            else result += getRandomElement(data.kanji[useKey][char]);
+        }
+        for (let i = 0; i < jumped; i++) {
+            result += "."
+        }
+        if (jumped2) {
+            result += "‌"
         }
     }
 
@@ -30,17 +49,37 @@ export function encrypt(input, key) {
 
 export function decrypt(input, key) {
     let result = "";
+    let skips = 0;
 
     while (key.length < input.length) {
         key += key;
     }
 
     for (let i = 0; i < input.length; i++) {
+        while (input[i] === "​" || input[i] === "‌") {
+            i++;  //skip all . and ,
+            skips++;
+        }
+        
         const char = input[i];
-        let useKey = key[i].toString();
+        let useKey = key[i - skips].toString();
+        let checkNext = 0;
+        let check2 = false;
+
+        while (input[i + checkNext + 1] == "​") { //how many invis spaces there are
+            checkNext++;
+        }
+        if (input[i + checkNext + 1] == ",") {
+            check2 = true;
+        }
+
+        for (let i = 0; i < checkNext; i++) {
+            let old = useKey;
+            useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
+        }
+        if (check2) useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
 
         result += find(char, useKey);
-
     }
 
     return result;
@@ -64,7 +103,10 @@ function find(char, key) {
             return letter; //return the letter where character found
         }
     }
-    return char; //return null if character not found
+    if (char == "​" || char == "‌") {
+        return char;
+    }
+    else return char; //return null if character not found
 }
 
 
@@ -187,3 +229,5 @@ export function getRandomCharacter() {
     const [randomLetter, kanjiList] = letterEntries[Math.floor(Math.random() * letterEntries.length)]; //pick random letter
     return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // return random kanji
 }
+
+console.log(decrypt(encrypt("hello", convertBase4("hello")), convertBase4("hello")));
