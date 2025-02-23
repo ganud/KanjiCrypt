@@ -18,7 +18,7 @@ https://kanjicrypt.pages.dev/
 
 ## Installation
 
-KanjiCrypt and be installed and run locally.
+KanjiCrypt can be installed and run locally.
 
 Make sure node is installed, then clone this repository.
 

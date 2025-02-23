@@ -14,14 +14,18 @@ export function encrypt(input, key) {
     }
 
     for (let i = 0; i < input.length; i++) {
-        const char = input[i].toLowerCase();
+        const char = input[i];
         let useKey = key[i].toString();
 
+        // Ignore non alphanumeric
         if (!"qwertyuiopasdfghjklzxcvbnm".includes(char.toLowerCase())) {
             result += char;
         }
         else {
-            result += getRandomElement(data.kanji[useKey][char]);
+            if (isAlphanumericUppercase(char)) {
+                result += "^";
+            }
+            result += getRandomElement(data.kanji[useKey][char.toLowerCase()]);
         }
     }
 
@@ -38,14 +42,45 @@ export function decrypt(input, key) {
     for (let i = 0; i < input.length; i++) {
         const char = input[i];
         let useKey = key[i].toString();
-
         result += find(char, useKey);
-
     }
-
     return result;
 }
 
+export function decryptWithCase(input, key) {
+    let inputClean = [];
+    let indexes = [];
+    // Get a clean string without the carrots and remember their positions.
+    for (let i = 0; i < input.length; i++) {
+        if (input.charAt(i) == "^") {
+            indexes.push(i);
+        }
+        else {
+            inputClean.push(input.charAt(i));
+        }
+    }
+    // Pass the clean string
+    let decryptstring = decrypt(inputClean, key);
+    // Reimplement the uppercase
+    let decryptUpper = decryptstring;
+    for (let j = 0; j < indexes.length; j++) {
+        decryptUpper = uppercaseAtIndex(decryptUpper, indexes[j] - j)
+    }
+    
+    return decryptUpper
+}
+
+function uppercaseAtIndex(str, index) {
+    if (index >= str.length || index < 0) {
+      return str;
+    }
+    return str.substring(0, index) + str.charAt(index).toUpperCase() + str.substring(index + 1);
+  }
+  
+// converts a string ^b^o^bby into BOBby using ^ to denote
+export function parseCarrotUppercase(input) {
+    return input.replace(/\^([a-z])/g, (match, p1) => p1.toUpperCase());
+}
 
 export function convertBase4(str) {
     return str.split('')
@@ -55,6 +90,16 @@ export function convertBase4(str) {
 
 function getRandomElement(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function isAlphanumericUppercase(str) {
+    if (!/^[a-zA-Z0-9]+$/.test(str)) {
+      return false; // Not alphanumeric
+    }
+    if (str !== str.toUpperCase()) {
+      return false; // Not uppercase
+    }
+    return true;
 }
 
 
@@ -187,3 +232,4 @@ export function getRandomCharacter() {
     const [randomLetter, kanjiList] = letterEntries[Math.floor(Math.random() * letterEntries.length)]; //pick random letter
     return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // return random kanji
 }
+

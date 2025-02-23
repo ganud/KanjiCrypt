@@ -1,10 +1,11 @@
 import { useState } from "react";
 import {
-  decrypt,
+  decryptWithCase,
   encrypt,
   convertBase4,
   hoverEffect,
   hoverEffect2,
+  parseCarrotUppercase,
 } from "../../convert";
 
 function resetEncrypt() {
@@ -30,8 +31,8 @@ export default function Input() {
   if (isDecrypt) {
     output =
       baseFour == ""
-        ? decrypt(input, convertBase4(input))
-        : decrypt(input, convertBase4(baseFour));
+        ? decryptWithCase(input, convertBase4(input))
+        : decryptWithCase(input, convertBase4(baseFour));
   } else {
     // baseFour is the key used to seed the output if it was inputted, else use current input as key
     output =
