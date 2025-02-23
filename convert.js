@@ -55,33 +55,33 @@ export function decrypt(input, key) {
         key += key;
     }
 
-    for (let i = 0; i < input.length; i++) {
-
-        if (i >= input.length) break;
+    for (let i = 0, keyIndex = 0; i < input.length; i++, keyIndex++) {
         while (input[i] === "​" || input[i] === "‌") {
-            i++;  //skip all . and ,
-            skips++;
+            i++;
         }
+    
         if (i >= input.length) break;
-        
+    
         const char = input[i];
-        let useKey = key[i - skips].toString();
+        let useKey = key[keyIndex].toString();
         let checkNext = 0;
         let check2 = false;
-
-        while (input[i + checkNext + 1] == "​") { //how many invis spaces there are
+    
+        while (i + checkNext + 1 < input.length && input[i + checkNext + 1] === "​") {
             checkNext++;
         }
-        if (input[i + checkNext + 1] == "‌") {
+    
+        if (i + checkNext + 1 < input.length && input[i + checkNext + 1] === "‌") {
             check2 = true;
         }
-
-        for (let i = 0; i < checkNext; i++) {
-
+    
+        for (let j = 0; j < checkNext; j++) {
             useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
         }
-        if (check2) useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
-
+        if (check2) {
+            useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
+        }
+    
         result += find(char, useKey);
     }
 
@@ -232,5 +232,3 @@ export function getRandomCharacter() {
     const [randomLetter, kanjiList] = letterEntries[Math.floor(Math.random() * letterEntries.length)]; //pick random letter
     return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // return random kanji
 }
-
-console.log(decrypt(encrypt("hello", convertBase4("hello")), convertBase4("hello")));
