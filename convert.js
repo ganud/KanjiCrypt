@@ -37,7 +37,7 @@ export function encrypt(input, key) {
             else result += getRandomElement(data.kanji[useKey][char]);
         }
         for (let i = 0; i < jumped; i++) {
-            result += "."
+            result += "​"
         }
         if (jumped2) {
             result += "‌"
@@ -69,7 +69,7 @@ export function decrypt(input, key) {
         while (input[i + checkNext + 1] == "​") { //how many invis spaces there are
             checkNext++;
         }
-        if (input[i + checkNext + 1] == ",") {
+        if (input[i + checkNext + 1] == "‌") {
             check2 = true;
         }
 
