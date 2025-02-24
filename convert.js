@@ -16,8 +16,10 @@ export function encrypt(input, key) {
     for (let i = 0; i < input.length; i++) {
         const char = input[i];
         let useKey = key[i].toString();
+        const nextKey = (parseInt(key[i]) === 3) ? "0" : (parseInt(key[i]) + 1).toString();
+        let jumped = 0;
+        let jumped2 = false;
 
-        // Ignore non alphanumeric
         if (!"qwertyuiopasdfghjklzxcvbnm".includes(char.toLowerCase())) {
             result += char;
         }
@@ -25,7 +27,22 @@ export function encrypt(input, key) {
             if (isAlphanumericUppercase(char)) {
                 result += "^";
             }
-            result += getRandomElement(data.kanji[useKey][char.toLowerCase()]);
+            while (data.kanji[useKey][char.toLowerCase()].length === 0) {//find where kanji exists if array empty
+                useKey = (parseInt(useKey) === 3) ? "0" : (parseInt(useKey) + 1).toString(); //increment key
+                jumped++;
+            }
+
+            if (data.kanji[useKey][char.toLowerCase()].length <= (data.kanji[nextKey][char.toLowerCase()].length * .2)) { //if the next key is 5x bigger then just use that, makes cypher more robust
+                result += getRandomElement(data.kanji[nextKey][char.toLowerCase()]);
+                jumped2 = true;
+            }
+            else result += getRandomElement(data.kanji[useKey][char.toLowerCase()]);
+        }
+        for (let i = 0; i < jumped; i++) {
+            result += "​"
+        }
+        if (jumped2) {
+            result += "‌"
         }
     }
 
@@ -34,41 +51,83 @@ export function encrypt(input, key) {
 
 export function decrypt(input, key) {
     let result = "";
+    let skips = 0;
 
     while (key.length < input.length) {
         key += key;
     }
 
-    for (let i = 0; i < input.length; i++) {
+    for (let i = 0, keyIndex = 0; i < input.length; i++, keyIndex++) {
+        while (input[i] === "​" || input[i] === "‌") {
+            i++;
+        }
+    
+        if (i >= input.length) break;
+    
         const char = input[i];
-        let useKey = key[i].toString();
+        let useKey = key[keyIndex].toString();
+        let checkNext = 0;
+        let check2 = false;
+    
+        while (i + checkNext + 1 < input.length && input[i + checkNext + 1] === "​") {
+            checkNext++;
+        }
+    
+        if (i + checkNext + 1 < input.length && input[i + checkNext + 1] === "‌") {
+            check2 = true;
+        }
+    
+        for (let j = 0; j < checkNext; j++) {
+            useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
+        }
+        if (check2) {
+            useKey = (parseInt(useKey, 10) === 3) ? "0" : (parseInt(useKey, 10) + 1).toString();
+        }
+    
         result += find(char, useKey);
     }
+
     return result;
 }
 
 export function decryptWithCase(input, key) {
-    let inputClean = [];
+    let inputNoCarrot = []; // The input, without the carrots but still has invisible characters.
+    let inputNoInvis = trimInvisibleChars(input) // The input without invisible characters, because decrypt returns a normal string we need normal indexes
     let indexes = [];
-    // Get a clean string without the carrots and remember their positions.
+
+    // Get a string without carrots to be inputted into decrypt.
+    // We do NOT take the indexes of this string due to invisible characters.
     for (let i = 0; i < input.length; i++) {
-        if (input.charAt(i) == "^") {
-            indexes.push(i);
-        }
-        else {
-            inputClean.push(input.charAt(i));
+        if (!(input.charAt(i) == "^")) {
+            inputNoCarrot.push(input.charAt(i));
         }
     }
-    // Pass the clean string
-    let decryptstring = decrypt(inputClean, key);
-    // Reimplement the uppercase
+    // Remember the positions of carrots in the normal indexed string
+    for (let i = 0; i < inputNoInvis.length; i++) {
+        if (inputNoInvis.charAt(i) == "^") {
+            indexes.push(i);        
+        }
+    }
+    // Decryptstring takes invisible characters and returns a normal indexed string
+    let decryptstring = decrypt(inputNoCarrot, key);
+    // Reimplement uppercase using normal indexes
     let decryptUpper = decryptstring;
     for (let j = 0; j < indexes.length; j++) {
-        decryptUpper = uppercaseAtIndex(decryptUpper, indexes[j] - j)
+        decryptUpper = uppercaseAtIndex(decryptUpper,  indexes[j] - j)
     }
     
     return decryptUpper
 }
+
+function trimInvisibleChars(str) {
+    // Define a regular expression to match invisible characters
+    // This includes zero-width spaces (U+200B) and other common invisible characters
+    const invisibleCharsRegex = /[\u200B\u200C\u200D\uFEFF]/g;
+  
+    // Replace all matches of invisible characters with an empty string
+    return str.replace(invisibleCharsRegex, '');
+  }
+  
 
 function uppercaseAtIndex(str, index) {
     if (index >= str.length || index < 0) {
@@ -77,10 +136,6 @@ function uppercaseAtIndex(str, index) {
     return str.substring(0, index) + str.charAt(index).toUpperCase() + str.substring(index + 1);
   }
   
-// converts a string ^b^o^bby into BOBby using ^ to denote
-export function parseCarrotUppercase(input) {
-    return input.replace(/\^([a-z])/g, (match, p1) => p1.toUpperCase());
-}
 
 export function convertBase4(str) {
     return str.split('')
@@ -233,3 +288,4 @@ export function getRandomCharacter() {
     return kanjiList[Math.floor(Math.random() * kanjiList.length)]; // return random kanji
 }
 
+// [33, 39, 42, 45]
